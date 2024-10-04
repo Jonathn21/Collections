@@ -38,7 +38,11 @@
             <h1 class="text-4xl font-bold text-center">Détails du Produit</h1>
             <div class="collection-name">{{ produit.nom }}</div>
         </div>
+        
     </header>
+    <div class="logo-container text-center mt-2">
+        <img src="{% static 'images/FROMTHEREJAUNE.png' %}" alt="Logo" class="inline-block w-32 h-32 object-contain">
+    </div>
 
     <main class="container mx-auto p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {% if produit.images.all %}

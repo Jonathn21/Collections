@@ -10,8 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os
-import dj_database_url
-import django_heroku
+
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,20 +27,15 @@ SECRET_KEY = 'django-insecure-13z&6702gdy4g31q-1ukg)7q0#xr!h2h#^4a9w=)jxss-z8r&p
 DEBUG = True
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'vSkmQ8WxZwdsJOJ3VC94d1LBv_FWuOcpDSEkuHpTtKHyacrsDOjH88oVxUsTf1t69zc')
-DEBUG = False  # Assurez-vous que le mode DEBUG est désactivé en production
-ALLOWED_HOSTS = ['.vercel.app']  # Permettez votre domaine Heroku
+ALLOWED_HOSTS = []  # Permettez votre domaine Heroku
 
-
-
-DATABASES = {
-    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
-}
 
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'whitenoise.runserver_nostatic',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -67,6 +61,7 @@ NPM_BIN_PATH = "C:\\Program Files\\nodejs\\npm.cmd"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -147,7 +142,6 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
-django_heroku.settings(locals())
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
