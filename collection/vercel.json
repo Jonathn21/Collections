@@ -1,14 +1,14 @@
 {
     "builds": [
       {
-        "src": "colection/manage.py",
+        "src": "manage.py",
         "use": "@vercel/python"
       }
     ],
     "routes": [
       {
         "src": "/(.*)",
-        "dest": "collection/manage.py"
+        "dest": "/manage.py"
       }
     ]
   }
