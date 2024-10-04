@@ -47,6 +47,21 @@
             font-size: 2rem;
             margin-bottom: 20px;
         }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.5); /* Une légère transparence */
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
     </style>
     
 </head>
@@ -56,13 +71,46 @@
             <h1 class="text-4xl font-bold text-center">Catalogue de Produits</h1>
             <div class="collection-name">Collection : For Everybody</div>
         </div>
-        
     </header>
+    
     <div class="logo-container text-center mt-2">
         <img src="{% static 'images/FROMTHEREJAUNE.png' %}" alt="Logo" class="inline-block w-32 h-32 object-contain">
     </div>
-
     <main class="container mx-auto p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <div class="col-span-1 sm:col-span-2 lg:col-span-3">
+            <div class="relative h-64 sm:h-96 lg:h-screen">
+                <video autoplay loop muted class="absolute inset-0 w-full h-full object-cover z-0">
+                    <source src="{% static 'videos/2.mp4' %}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="overlay absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 z-20">
+                    <h2 class="text-white text-2xl font-bold">Explorez nos nouveautés</h2>
+                    <p class="text-white">Découvrez les dernières tendances en streetwear.</p>
+                    <a href="#produits" class="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800">Achetez Maintenant</a>
+                </div>
+            </div>
+        </div>
+        
+        <style>
+            @media (max-width: 640px) {
+                .relative {
+                    height: auto; /* Ajuste la hauteur pour les petits écrans */
+                    aspect-ratio: 1; /* Assure un rapport d'aspect carré */
+                }
+                video {
+                    height: 100%; /* Assure que la vidéo prend toute la hauteur */
+                }
+            }
+        </style>
+        
+        
+    
+        <!-- Phrase ajoutée ici -->
+        <div class="col-span-1 sm:col-span-2 lg:col-span-3 text-center my-6">
+            <h3 id="produits" class="text-4xl font-bold text-center">Nos produits For Everybody</h3>
+        </div>
+        
         <!-- Itération sur les produits -->
         {% for produit in produits %}
         <div class="bg-white shadow-lg rounded-lg overflow-hidden">
@@ -77,21 +125,19 @@
                 <div class="product-info p-4">
                     <!-- Afficher le nom du produit -->
                     <p class="text-xl font-semibold">{{ produit.nom }}</p>
-
+    
                     <!-- Afficher le prix du produit -->
                     <p class="text-lg font-semibold">Prix : {{ produit.variantes.first.prix }} FCFA</p>
                     <a href="{% url 'produit_detail' produit.id %}" 
                     class="mt-2 block text-blue-600 hover:text-blue-500 transition duration-200 underline">
                      Voir le produit
-                 </a>
-                 
-                
-                
+                     </a>
                 </div>
             </div>
         </div>
         {% endfor %}
     </main>
+    
     <script>
         document.querySelectorAll('.whatsapp-link').forEach(function (button) {
             button.addEventListener('click', function (event) {
@@ -110,7 +156,6 @@
                 window.open(whatsappUrl, '_blank'); // Ouvre le lien dans un nouvel onglet
             });
         });
-        
     </script>
  
     <!-- Footer -->
