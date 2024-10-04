@@ -27,7 +27,11 @@ SECRET_KEY = 'django-insecure-13z&6702gdy4g31q-1ukg)7q0#xr!h2h#^4a9w=)jxss-z8r&p
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+SECRET_KEY = os.environ.get('SECRET_KEY', 'vSkmQ8WxZwdsJOJ3VC94d1LBv_FWuOcpDSEkuHpTtKHyacrsDOjH88oVxUsTf1t69zc')
+DEBUG = False  # Assurez-vous que le mode DEBUG est désactivé en production
+ALLOWED_HOSTS = ['.vercel.app']  # Permettez votre domaine Heroku
+
+
 
 DATABASES = {
     'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
