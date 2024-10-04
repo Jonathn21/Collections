@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-6 py-8">
+    <h1 class="text-4xl font-bold text-center mb-8 text-gray-800 tracking-wide">Votre Panier</h1>
+
+    {% if panier %}
+        <!-- Panier sous forme de tableau -->
+        <table class="min-w-full border border-gray-300">
+            <thead>
+                <tr class="bg-gray-100">
+                    <th class="p-4 text-left">Article</th>
+                    <th class="p-4 text-left">Prix unitaire</th>
+                    <th class="p-4 text-left">Quantité</th>
+                    <th class="p-4 text-left">Total</th>
+                    <th class="p-4 text-left">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for element in panier.elements.all %}
+                <tr class="border-b">
+                    <td class="p-4 flex items-center">
+                        <img src="{{ element.produit.images.first.image.url }}" alt="{{ element.produit.nom }}" class="w-16 h-16 rounded-lg mr-4">
+                        {{ element.produit.nom }}
+                    </td>
+                    <td class="p-4">{{ element.produit.prix }} FCFA</td>
+                    <td class="p-4">
+                        <div class="flex items-center space-x-2">
+                            <button class="bg-gray-200 text-gray-700 px-2 py-1 rounded" onclick="updateQuantity({{ element.pk }}, -1, {{ element.produit.prix }})">-</button>
+                            <input type="text" value="{{ element.quantite }}" class="w-16 text-center border border-gray-300 rounded" id="quantity-{{ element.pk }}" oninput="updateTotal({{ element.pk }}, {{ element.produit.prix }})">
+                            <button class="bg-gray-200 text-gray-700 px-2 py-1 rounded" onclick="updateQuantity({{ element.pk }}, 1, {{ element.produit.prix }})">+</button>
+                        </div>
+                    </td>
+                    <td class="p-4"><span class="total-price" data-id="{{ element.pk }}">{{ element.produit.prix|multiply:element.quantite }} FCFA</span></td>
+                    <td class="p-4">
+                        <a href="{% url 'retirer_du_panier' element.pk %}" class="text-red-600 hover:text-red-700">Retirer</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Résumé du panier -->
+        <div class="mt-10 text-right">
+            <strong class="text-xl font-semibold text-gray-800">Total général :</strong> <span id="total-cart" class="text-xl font-bold text-gray-900">{{ panier.total }} FCFA</span>
+        </div>
+
+        <!-- Bouton pour finaliser l'achat -->
+        <div class="mt-8 text-center">
+            <button onclick="showModal()" class="bg-gradient-to-r from-green-400 to-green-600 text-white px-8 py-4 rounded-lg text-xl font-semibold hover:from-green-500 hover:to-green-700 transition-transform transform hover:scale-105">Finaliser l'achat</button>
+        </div>
+
+    {% else %}
+        <!-- Panier vide -->
+        <p class="mt-4 text-center text-lg font-medium text-gray-500">Votre panier est actuellement vide.</p>
+    {% endif %}
+</div>
+
+<!-- Modal de confirmation d'achat -->
+<div id="checkout-modal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-75 hidden">
+    <div class="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full transition-transform transform hover:scale-105">
+        <h2 class="text-3xl font-bold mb-6 text-gray-900">Finaliser votre achat</h2>
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="mb-6">
+                <label for="name" class="block text-gray-700 font-medium">Nom complet</label>
+                <input type="text" id="name" name="name" class="w-full border border-gray-300 rounded-lg px-4 py-3 mt-2 focus:outline-none focus:ring-2 focus:ring-green-500" required>
+            </div>
+            <div class="mb-6">
+                <label for="email" class="block text-gray-700 font-medium">Email</label>
+                <input type="email" id="email" name="email" class="w-full border border-gray-300 rounded-lg px-4 py-3 mt-2 focus:outline-none focus:ring-2 focus:ring-green-500" required>
+            </div>
+            <div class="mb-6">
+                <label for="address" class="block text-gray-700 font-medium">Adresse</label>
+                <input type="text" id="address" name="address" class="w-full border border-gray-300 rounded-lg px-4 py-3 mt-2 focus:outline-none focus:ring-2 focus:ring-green-500" required>
+            </div>
+
+            <div class="mb-6">
+                <p class="block text-gray-700 font-medium">Mode de paiement</p>
+                <div class="flex space-x-6">
+                    <label class="cursor-pointer">
+                        <input type="radio" name="payment_method" value="paypal" class="hidden" required>
+                        <img src="{% static 'images/paypal.png' %}" alt="PayPal" class="w-20 h-20 border rounded-lg hover:border-green-500 transition duration-300">
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="payment_method" value="visa" class="hidden" required>
+                        <img src="{% static 'images/visa.png' %}" alt="Visa" class="w-20 h-14 border rounded-lg hover:border-green-500 transition duration-300">
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="payment_method" value="moov_money" class="hidden" required>
+                        <img src="{% static 'images/moov.png' %}" alt="Moov Money" class="w-20 h-14 border rounded-lg hover:border-green-500 transition duration-300">
+                    </label>
+                </div>
+            </div>
+
+            <div class="flex justify-end mt-6">
+                <button type="button" onclick="hideModal()" class="bg-gray-400 text-white px-6 py-3 rounded-lg mr-3 hover:bg-gray-500 transition-colors">Annuler</button>
+                <button type="submit" class="bg-green-500 text-white px-8 py-3 rounded-lg hover:bg-green-600 transition-colors">Confirmer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Ouvrir le modal
+function showModal() {
+    document.getElementById('checkout-modal').classList.remove('hidden');
+}
+
+// Fermer le modal
+function hideModal() {
+    document.getElementById('checkout-modal').classList.add('hidden');
+}
+
+// Mise à jour de la quantité et du total
+function updateQuantity(elementId, change, price) {
+    var input = document.getElementById('quantity-' + elementId);
+    var currentQuantity = parseInt(input.value);
+    var newQuantity = currentQuantity + change;
+
+    if (newQuantity > 0) {
+        input.value = newQuantity;
+        updateTotal(elementId, price);
+        // Appel AJAX pour mettre à jour la quantité côté serveur
+        fetch(`/update-cart/${elementId}/?quantity=${newQuantity}`, { method: 'POST' });
+    }
+}
+
+// Mise à jour du prix total par produit
+function updateTotal(elementId, price) {
+    var input = document.getElementById('quantity-' + elementId);
+    var quantity = parseInt(input.value);
+    var totalPriceElement = document.querySelector(`.total-price[data-id="${elementId}"]`);
+    var total = quantity * price;
+
+    // Update the total price for this specific product
+    totalPriceElement.innerText = `${total} FCFA`;
+
+    // Update the overall cart total
+    updateCartTotal();
+}
+
+// Mise à jour du total général du panier
+function updateCartTotal() {
+    let totalCart = 0;
+    document.querySelectorAll('.total-price').forEach(function(element) {
+        totalCart += parseInt(element.innerText);
+    });
+    document.getElementById('total-cart').innerText = `${totalCart} FCFA`;
+}
+</script>
+{% endblock %}
