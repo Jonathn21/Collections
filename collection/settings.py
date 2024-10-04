@@ -24,12 +24,11 @@ TEMPLATE_DIR = os.path.join(BASE_DIR,'templates')
 SECRET_KEY = 'django-insecure-13z&6702gdy4g31q-1ukg)7q0#xr!h2h#^4a9w=)jxss-z8r&p'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'vSkmQ8WxZwdsJOJ3VC94d1LBv_FWuOcpDSEkuHpTtKHyacrsDOjH88oVxUsTf1t69zc')
-ALLOWED_HOSTS = ['collection-foreverybody.onrender.com',
-    'localhost',  
-    '127.0.0.1',  ]
+ALLOWED_HOSTS = ['fromthere.pythonanywhere.com']
+
 
 
 
