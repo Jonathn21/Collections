@@ -1,0 +1,96 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails du Produit - {{ produit.nom }}</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        .image-container {
+            position: relative;
+            overflow: hidden;
+        }
+        .image-container img {
+            transition: transform 0.5s ease;
+        }
+        .image-container:hover img {
+            transform: scale(1.05);
+        }
+        .collection-name {
+            background: #008000; /* Couleur verte */
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <header class="bg-white shadow">
+        <div class="container mx-auto p-6">
+            <h1 class="text-4xl font-bold text-center">Détails du Produit</h1>
+            <div class="collection-name">{{ produit.nom }}</div>
+        </div>
+        
+    </header>
+    <div class="logo-container text-center mt-2">
+        <img src="{% static 'images/FROMTHEREJAUNE.png' %}" alt="Logo" class="inline-block w-32 h-32 object-contain">
+    </div>
+
+    <main class="container mx-auto p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% if produit.images.all %}
+            {% for image in produit.images.all %}
+                <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                    <div class="image-container">
+                        <img src="{{ image.image.url }}" alt="Image de {{ produit.nom }}" class="w-full h-auto object-cover">
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                <img src="{% static 'images/default.jpg' %}" alt="Image par défaut" class="w-full h-auto object-cover">
+            </div>
+        {% endif %}
+    </main>
+    
+    <section class="container mx-auto p-6 bg-white rounded-lg shadow-lg mt-6">
+        <p class="mb-2 text-center text-2xl">S-XL : <span class="font-bold text-2xl">{{ prix_s_xl|default:"Non disponible" }} FCFA</span></p>
+        <p class="mb-2 text-center text-2xl">2XL-5XL : <span class="font-bold text-2xl">{{ prix_2xl_5xl|default:"Non disponible" }} FCFA</span></p>
+        
+        
+        <div class="mt-4 flex justify-center">
+            <a id="whatsapp-link" href="#" class="bg-blue-600 text-white font-bold py-3 px-6 rounded hover:bg-blue-500 text-lg">
+                Commander
+            </a>
+        </div>
+    </section>
+    <script>
+        document.getElementById('whatsapp-link').addEventListener('click', function (event) {
+            event.preventDefault(); // Empêche le comportement par défaut du lien
+            const produitNom = "{{ produit.nom }}";
+            const produitLien = "{{ produit.lien }}";
+            const messageWhatsApp = `Bonjour ! Je souhaite commander le produit "${produitNom}". Voici le lien vers le produit : ${produitLien}. `;
+            
+            // Remplacez 'NUMERO_DE_TELEPHONE' par le numéro de téléphone réel
+            const numeroTelephone = '22871161679'; // Numéro de téléphone avec l'indicatif
+            const whatsappUrl = `https://wa.me/${numeroTelephone}?text=${encodeURIComponent(messageWhatsApp)}`;
+
+            // Redirige directement vers WhatsApp
+            window.open(whatsappUrl, '_blank'); // Ouvre le lien dans un nouvel onglet
+        });
+    </script>
+    
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2024 From There. Tous droits réservés.</p>
+        </div>
+    </footer>
+</body>
+</html>
